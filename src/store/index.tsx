@@ -1,6 +1,5 @@
 import { FC, createContext, ReactNode, useContext, useEffect, useReducer } from "react";
 import { Product } from "../models/product";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import { reducer, initialState } from "./reducer";
 import { ContextType, ActionTypes} from "./contextTypes";
 import { useActions } from "./actions";
@@ -25,25 +24,8 @@ const ContextProvider: FC<Props> = ({ children }) => {
         dispatch({type: ActionTypes.setFilteredProducts, payload: newProducts})
     }, [state.items, state.searchInput, state.categoryFilter])
 
-    //localstorage values like login
-    const [{item: userStorage}, saveUserStorage, clearUserStorage ] = useLocalStorage("USER_V1", state.user)
-
-    const deleteUser = () => {
-        clearUserStorage()
-        actions.setUser(null)
-    }
-
-    useEffect(() => {
-        if(userStorage) {
-            actions.setUser(userStorage)
-        }else {
-            if(state.user) saveUserStorage(state.user)
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[state.user, userStorage])
-
     return (
-        <Context.Provider value={{state, actions, deleteUser}}>
+        <Context.Provider value={{ state, actions }}>
             {children}
         </Context.Provider>
     )   

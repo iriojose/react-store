@@ -11,13 +11,18 @@ import { totalPriceCart } from "../utils";
 
 export const useActions = (state: State, dispatch: Dispatch<Action<ActionTypes, any>>): Actions => {
     //localstorage
-    const [ { item: cart }, saveCart ] = useLocalStorage("CART_PRODUCTS_V1", state.cartProduct);
+    const [ cart, saveCart, clearCart ] = useLocalStorage("CART_PRODUCTS_V1", state.cartProduct);
+    const [ user, saveUser, deleteUser ] = useLocalStorage("USER_V1", state.user)
 
     useEffect(() => {
         if(cart) dispatch({type: ActionTypes.setCartProducts, payload: cart})
-        else saveCart(state.cartProduct)
+        if(user) dispatch({type: ActionTypes.setUser, payload: user})
     },[]) 
 
+    useEffect(() => {
+        saveCart(state.cartProduct)
+    }, [state.cartProduct])
+    
     //side menu product detail
     const openProducDetail = () => dispatch({ type: ActionTypes.setProductDetail, payload: true})
     const closeProductDetail = () => dispatch({ type: ActionTypes.setProductDetail, payload: false})
@@ -39,7 +44,6 @@ export const useActions = (state: State, dispatch: Dispatch<Action<ActionTypes, 
     //add Item to cart
     const addItemToCart = (product: Product) => {
         dispatch({type: ActionTypes.setCartProducts, payload: [...state.cartProduct, product]})
-        saveCart(state.cartProduct)
         openCheckoutSideMenuOpen()
         closeProductDetail()
     }
@@ -62,6 +66,7 @@ export const useActions = (state: State, dispatch: Dispatch<Action<ActionTypes, 
 
         dispatch({type: ActionTypes.setOrders, payload: [...state.orders, newOrder]})
         dispatch({type: ActionTypes.setCartProducts, payload: []})
+        clearCart()
         closeCheckoutSideMenuOpen()
     }
 
@@ -70,9 +75,13 @@ export const useActions = (state: State, dispatch: Dispatch<Action<ActionTypes, 
     const setSearchInput = (text:string) => dispatch({type: ActionTypes.setSearchInput, payload: text }) 
     const setCategoryFilter = (text: string) => dispatch({type: ActionTypes.setCategoryFilter, payload: text})
 
-    // user actions
-    const setUser = (user: User | null) => dispatch({type: ActionTypes.setUser, payload: user})
-
+    //set user
+    const setUser = (user: User | null) => {
+        dispatch({type: ActionTypes.setUser, payload: user})
+        if(user) saveUser(user)
+        else deleteUser()
+    }
+    
     return  {
         openProducDetail,
         closeProductDetail,

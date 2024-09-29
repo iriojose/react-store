@@ -5,7 +5,6 @@ import { Order } from "../models/order";
 export type ContextType = {
     state: State
     actions: Actions
-    deleteUser: () => void
 }
 
 export interface Actions {
