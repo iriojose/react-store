@@ -33,7 +33,7 @@ export type State = {
     filteredProducts: Product[],
     searchInput: string,
     categoryFilter: string,
-    user: User
+    user: User | null
 }
 
 export enum ActionTypes {
