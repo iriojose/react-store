@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react"
+import { ChangeEvent, FC, useEffect } from "react"
 import { useContextProvider } from "../../store"
 import { Layout } from "../../components/templates/Layout"
 import { Card } from "../../components/organisms/Card"
@@ -25,6 +25,10 @@ const Home: FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loadingProducts])
 
+    const handlerSearchInput = (e: ChangeEvent<HTMLInputElement> ) => {
+        setSearchInput(e.target.value)
+    }
+
     return (
         <Layout>
             <div>
@@ -32,8 +36,9 @@ const Home: FC = () => {
                 <Input 
                     className="p-2 rounded-lg border border-black/20 my-4 focus-within:border-black w-72" 
                     value={searchInput} 
+                    name="search"
                     placeholder="Search..."
-                    onChange={setSearchInput} 
+                    onChange={handlerSearchInput} 
                     leftIcon={() => <img className="h-6 w-6 mr-3" src={Lupa} />}
                     rightIcon={() => (searchInput.length > 0 &&
                         <img 
