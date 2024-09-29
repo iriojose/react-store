@@ -6,7 +6,7 @@ import { List } from "../../atoms/List"
 import { leftLinks, rightLinks, Link, rightLinksOffWebSite } from "./links";
 
 const Navbar: FC = () => {
-    const {state: {cartProduct, user}, actions: {openCheckoutSideMenuOpen, setCategoryFilter}, deleteUser} = useContextProvider()
+    const {state: {cartProduct, user}, actions: {openCheckoutSideMenuOpen, setCategoryFilter, setUser}} = useContextProvider()
 
     const isActiveLink = ({isActive}:{isActive: boolean}): string => {
         if(isActive) return "underline underline-offset-4"
@@ -14,7 +14,7 @@ const Navbar: FC = () => {
     }
 
     const signOut = (path: string) => {
-        if(path == "/login") deleteUser()
+        if(path == "/login") setUser(null)
     }
 
     return (

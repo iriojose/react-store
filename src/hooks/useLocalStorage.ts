@@ -1,63 +1,35 @@
 import { useEffect, useState } from "react";
 
-type Storage<T> = {
-    error: boolean
-    loading: boolean
-    item: T | null
-}
-
-const useLocalStorage = <T>(key: string, initialValue: T): [Storage<T>, (args: T) => void, () => void] => {
-    const [error, setError] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [item, setItem] = useState<T | null>(initialValue);
+const useLocalStorage = <T>(key: string, initialValue: T) => {
+    //set values with initialValues o localstorage data
+    const [item, setItem] = useState<T>(() => {
+        try {
+            const item = window.localStorage.getItem(key);
+            return item ? JSON.parse(item) : initialValue;
+        } catch (error) {
+            console.warn("Error reading localStorage", error);
+            return initialValue;
+        }
+    });
 
     useEffect(() => {
         try {
-            const localStorageItem = localStorage.getItem(key);
-            let parsedItem;
-            
-            if (!localStorageItem) {
-                localStorage.setItem(key, JSON.stringify(initialValue));
-                parsedItem = initialValue;
-            } else {
-                parsedItem = JSON.parse(localStorageItem);
-            }
-
-            setItem(parsedItem);
-            setLoading(false);
-        } catch(error) {
-            console.log(error)
-            setError(true);
+            window.localStorage.setItem(key, JSON.stringify(item));
+        } catch (error) {
+            console.warn("Error saving to localStorage", error);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])  
+    }, [key, item]);
 
-    const saveItem = (args: T) => {
+    const clearLocalStorage = () => {
         try {
-            const stringifiedItem = JSON.stringify(args);
-            localStorage.setItem(key, stringifiedItem);
-            setItem(args);
-        } catch(error) {
-            console.log(error)
-            setError(true);
+            window.localStorage.removeItem(key);
+            setItem(initialValue); 
+        } catch (error) {
+            console.warn("Error clearing localStorage", error);
         }
-    }
+    };
 
-    const clearItem = () => {
-        try {
-            localStorage.removeItem(key)
-            setItem(null)
-        }catch(e) {
-            console.log(e)
-            setError(true);
-        }
-    }
-
-    return [
-        { error, loading, item }, 
-        saveItem, 
-        clearItem
-    ]
+    return [ item, setItem, clearLocalStorage ] as const;
 }
 
 export { useLocalStorage }

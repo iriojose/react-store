@@ -5,7 +5,6 @@ import { Order } from "../models/order";
 export type ContextType = {
     state: State
     actions: Actions
-    deleteUser: () => void
 }
 
 export interface Actions {
@@ -34,7 +33,7 @@ export type State = {
     filteredProducts: Product[],
     searchInput: string,
     categoryFilter: string,
-    user: User | null
+    user: User
 }
 
 export enum ActionTypes {
