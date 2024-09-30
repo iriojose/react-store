@@ -14,14 +14,26 @@ export const useActions = (state: State, dispatch: Dispatch<Action<ActionTypes, 
     const [ cart, saveCart, clearCart ] = useLocalStorage("CART_PRODUCTS_V1", state.cartProduct);
     const [ user, saveUser, deleteUser ] = useLocalStorage("USER_V1", state.user)
 
+    //initial charge of localstorage
     useEffect(() => {
         if(cart) dispatch({type: ActionTypes.setCartProducts, payload: cart})
         if(user) dispatch({type: ActionTypes.setUser, payload: user})
     },[]) 
 
+    //save cart to localstorage when change its value
     useEffect(() => {
         saveCart(state.cartProduct)
     }, [state.cartProduct])
+
+    //effect to filter
+    useEffect(() => {
+        let newProducts: Product[] = state.items;
+
+        if(state.categoryFilter !== "") newProducts = newProducts.filter(item => item.category.name.toLowerCase().includes(state.categoryFilter.toLowerCase()))
+        if(state.searchInput !== '') newProducts = newProducts.filter(item => item.title.toLowerCase().includes(state.searchInput.toLowerCase()));
+        
+        dispatch({type: ActionTypes.setFilteredProducts, payload: newProducts})
+    }, [state.items, state.searchInput, state.categoryFilter])
     
     //side menu product detail
     const openProducDetail = () => dispatch({ type: ActionTypes.setProductDetail, payload: true})
