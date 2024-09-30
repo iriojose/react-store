@@ -1,7 +1,6 @@
-import { FC, createContext, ReactNode, useContext, useEffect, useReducer } from "react";
-import { Product } from "../models/product";
+import { FC, createContext, ReactNode, useContext, useReducer } from "react";
 import { reducer, initialState } from "./reducer";
-import { ContextType, ActionTypes} from "./contextTypes";
+import { ContextType } from "./contextTypes";
 import { useActions } from "./actions";
 
 type Props = {
@@ -13,16 +12,6 @@ const Context = createContext<ContextType | undefined>(undefined)
 const ContextProvider: FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
     const actions = useActions(state, dispatch)
-
-    //effect to filter
-    useEffect(() => {
-        let newProducts: Product[] = state.items;
-
-        if(state.categoryFilter !== "") newProducts = newProducts.filter(item => item.category.name.toLowerCase().includes(state.categoryFilter.toLowerCase()))
-        if(state.searchInput !== '') newProducts = newProducts.filter(item => item.title.toLowerCase().includes(state.searchInput.toLowerCase()));
-        
-        dispatch({type: ActionTypes.setFilteredProducts, payload: newProducts})
-    }, [state.items, state.searchInput, state.categoryFilter])
 
     return (
         <Context.Provider value={{ state, actions }}>
