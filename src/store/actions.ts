@@ -13,7 +13,7 @@ export const useActions = (state: State, dispatch: Dispatch<Action<ActionTypes, 
     //localstorage
     const [ cart, saveCart, clearCart ] = useLocalStorage("CART_PRODUCTS_V1", state.cartProduct);
     const [ user, saveUser, deleteUser ] = useLocalStorage("USER_V1", state.user)
-
+    
     //initial charge of localstorage
     useEffect(() => {
         if(cart) dispatch({type: ActionTypes.setCartProducts, payload: cart})
