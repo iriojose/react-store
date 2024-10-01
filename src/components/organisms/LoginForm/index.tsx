@@ -1,4 +1,4 @@
-import { FC, useState, MouseEvent } from "react";
+import { FC, useState, FormEvent } from "react";
 import { Form } from "../../atoms/Form";
 import { Container } from "../../atoms/Container";
 import { Button } from "../../atoms/Button";
@@ -24,14 +24,14 @@ const LoginForm: FC = () => {
     const { formValues, formErrors, isFormValid, handleChange } = useForm(initialValues, inputValidationRules)
     const [showPassword, setShowPassword] = useState<boolean>(false)
 
-    const handlerClick = (e :MouseEvent) => {
+    const handlerClick = (e: FormEvent) => {
         e.preventDefault();
         actions.setUser({username: formValues.username, password: formValues.password})
         navigate("/")
     }
 
     return (
-        <Form>
+        <Form onSubmit={handlerClick}>
             <Container className="justify-center mt-10">
                 <Input 
                     className={`p-2 rounded-lg border my-2 w-72 ${formErrors.username ? "border-red-200 focus-within:border-red-500":"border-black/20 focus-within:border-black"}`}
@@ -73,7 +73,6 @@ const LoginForm: FC = () => {
                     className={`
                         relative overflow-hidden border border-black w-full h-10 rounded-lg bg-none group 
                         ${!isFormValid && "border-black/15 bg-black/10 cursor-not-allowed"}`}
-                    onClick={handlerClick}   
                     disabled={!isFormValid}
                 >                        
                     <div className={`relative z-10 ${isFormValid && "transition-colors duration-300 group-hover:text-white"}`}>
