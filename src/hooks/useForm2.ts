@@ -24,7 +24,8 @@ const useForm2 = () => {
     const [formErrors, setFormErrors] = useState<FormErrors>({});
     const [validations, setValidations] = useState<Validations>({})
     const [isFormValid, setIsFormValid] = useState(false)
-    
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
     const register = (name: string, rules?: Rules) => {
         if(!(name in formFields)) {
             setFormFields((prevValues) => ({
@@ -76,15 +77,33 @@ const useForm2 = () => {
         return hasNoErrors && allFieldsFilled;
     },[formErrors, formFields]);
 
+    const reset = () => {
+        setFormFields(prevFields => {
+            Object.keys(prevFields).forEach(key => {
+                prevFields[key] = '';
+            });
+            return prevFields;
+        });
+        
+        setFormErrors(prevErrors => {
+            Object.keys(prevErrors).forEach(key => {
+                prevErrors[key] = '';
+            });
+            return prevErrors;
+        });
+    }
+
     useEffect(() => {
         setIsFormValid(checkFormValidity());
     }, [formFields, formErrors, checkFormValidity]);
 
     return {
         register,
+        reset,
         formFields,
         formErrors,
-        isFormValid
+        isFormValid,
+        isSubmitting
     } 
 }
 
