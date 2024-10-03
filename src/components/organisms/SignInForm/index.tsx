@@ -16,10 +16,11 @@ const SignInForm: FC = () => {
     const { actions } = useContextProvider()
     const navigate = useNavigate()
     
-    const { register, handleSubmit, reset, formErrors, isFormValid, isSubmitting } = useForm()
+    const { register, handleSubmit, reset, getValues, formErrors, isFormValid, isSubmitting} = useForm()
     const [showPassword, setShowPassword] = useState(false)
 
     const onSubmit = async(data: FormState) => {
+        console.log(data)
         await new Promise((resolve) => setTimeout(resolve, 2000))
         actions.setUser(data as User)
         reset()
@@ -97,6 +98,27 @@ const SignInForm: FC = () => {
                         />
                     )}
                     onError={() => formErrors.password && <span className="text-red-500">{formErrors.password}</span>}
+                />
+                <Input 
+                    {...register("confirmPassword", {
+                        required: "This field is required",
+                        validate: (value: string) => {
+                            console.log(getValues("password"))
+                            return value == getValues("password") ? null:"Passwords must match"
+                        }
+                    })}
+                    type={showPassword ? "text":"password"}
+                    className={`p-2 rounded-lg border w-72 my-2 ${formErrors.confirmPassword ? "border-red-200 focus-within:border-red-500":"border-black/20 focus-within:border-black"}`}
+                    placeholder="********"
+                    label={() => (<div className="font-light mt-2">Confirm Password</div>)}
+                    rightIcon={() => (
+                        <img 
+                            className="h-5 w-5 cursor-pointer ml-3" 
+                            onClick={() => setShowPassword(!showPassword)} 
+                            src={showPassword ? Eye:EyeClose}
+                        />
+                    )}
+                    onError={() => formErrors.confirmPassword && <span className="text-red-500">{formErrors.confirmPassword}</span>}
                 />
             </Container>
 
