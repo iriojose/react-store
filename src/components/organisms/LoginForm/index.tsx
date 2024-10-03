@@ -19,7 +19,7 @@ const LoginForm: FC = () => {
     const { register, handleSubmit, reset, formErrors, isFormValid, isSubmitting } = useForm2()
     const [showPassword, setShowPassword] = useState(false)
 
-    const submit = async(data: FormState) => {
+    const onSubmit = async(data: FormState) => {
         await new Promise((resolve) => setTimeout(resolve, 2000))
         actions.setUser(data as User)
         reset()
@@ -29,7 +29,7 @@ const LoginForm: FC = () => {
     return (
         <Form onSubmit={(e) => {
             e.preventDefault() 
-            handleSubmit(submit)
+            handleSubmit(onSubmit)
         }}>
             <Container className="justify-center mt-10">
                 <Input 
@@ -38,7 +38,7 @@ const LoginForm: FC = () => {
                         emailFormat: "Must be a email",
                     })}
                     className={`p-2 rounded-lg border my-2 w-72 ${formErrors.username ? "border-red-200 focus-within:border-red-500":"border-black/20 focus-within:border-black"}`}
-                    placeholder="iriojgv"
+                    placeholder="iriojgv@gmail.com"
                     label={() => (<div className="font-light mt-2">Username</div>)}
                     rightIcon={() => (
                         <img 
