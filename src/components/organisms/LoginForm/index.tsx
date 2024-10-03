@@ -1,32 +1,36 @@
-import { FC, useState, FormEvent } from "react";
+import { FC, useState, /* FormEvent */ } from "react";
 import { Form } from "../../atoms/Form";
 import { Container } from "../../atoms/Container";
 import { Input } from "../../atoms/Input";
 import { Button } from "../../atoms/Button";
-import { useForm2 } from "../../../hooks/useForm2";
+import { useForm2, FormState } from "../../../hooks/useForm2";
 import { useContextProvider } from "../../../store";
 import { useNavigate } from "react-router-dom";
+import { User } from "../../../models/user";
 
 import Eye from "../../../assets/eye.svg"
 import EyeClose  from "../../../assets/eyeClose.svg"
 import UserIcon from "../../../assets/user.svg"
-import { User } from "../../../models/user";
 
 const LoginForm: FC = () => {
     const { actions } = useContextProvider()
     const navigate = useNavigate()
 
-    const { register, formErrors, formFields, isFormValid } = useForm2()
+    const { register, handleSubmit, reset, formErrors, isFormValid, isSubmitting } = useForm2()
     const [showPassword, setShowPassword] = useState(false)
 
-    const handlerClick = (e: FormEvent) => {
-        e.preventDefault();
-        actions.setUser(formFields as User)
+    const submit = async(data: FormState) => {
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        actions.setUser(data as User)
+        reset()
         navigate("/")
     }
 
     return (
-        <Form onSubmit={handlerClick}>
+        <Form onSubmit={(e) => {
+            e.preventDefault() 
+            handleSubmit(submit)
+        }}>
             <Container className="justify-center mt-10">
                 <Input 
                     {...register("username", {
@@ -73,13 +77,13 @@ const LoginForm: FC = () => {
                 <Button 
                     className={`
                         relative overflow-hidden border border-black w-full h-10 rounded-lg bg-none group 
-                        ${!isFormValid && "border-black/15 bg-black/10 cursor-not-allowed"}`}
-                    disabled={!isFormValid}
+                        ${(!isFormValid || isSubmitting) && "border-black/15 bg-black/10 cursor-not-allowed"}`}
+                    disabled={!isFormValid || isSubmitting}
                 >                        
-                    <div className={`relative z-10 ${isFormValid && "transition-colors duration-300 group-hover:text-white"}`}>
+                    <div className={`relative z-10 ${(isFormValid && !isSubmitting) && "transition-colors duration-300 group-hover:text-white"}`}>
                         Entrar
                     </div>
-                    {isFormValid && (<span className="absolute inset-0 bg-black/70 transition-transform duration-300 translate-y-full group-hover:translate-y-0"></span>)}
+                    {(isFormValid && !isSubmitting) && (<span className="absolute inset-0 bg-black/70 transition-transform duration-300 translate-y-full group-hover:translate-y-0"></span>)}
                 </Button>    
             </Container>
 

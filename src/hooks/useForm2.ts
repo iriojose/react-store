@@ -76,7 +76,11 @@ const useForm2 = () => {
         const allFieldsFilled = Object.values(formFields).every(value => value.trim() !== '');
         return hasNoErrors && allFieldsFilled;
     },[formErrors, formFields]);
-
+    
+    useEffect(() => {
+        setIsFormValid(checkFormValidity());
+    }, [formFields, formErrors, checkFormValidity]);
+    
     const reset = () => {
         setFormFields(prevFields => {
             Object.keys(prevFields).forEach(key => {
@@ -93,12 +97,18 @@ const useForm2 = () => {
         });
     }
 
-    useEffect(() => {
-        setIsFormValid(checkFormValidity());
-    }, [formFields, formErrors, checkFormValidity]);
+    const handleSubmit = async(onSubmit: (data: FormState) => Promise<void>) => {
+        setIsSubmitting(true);
+        try {
+            await onSubmit(formFields)
+        } finally {
+            setIsSubmitting(false); 
+        }
+    }
 
     return {
         register,
+        handleSubmit,
         reset,
         formFields,
         formErrors,
@@ -141,4 +151,4 @@ const validationRules = {
     },
 }; 
 
-export { useForm2 }
+export { useForm2, type FormState}
