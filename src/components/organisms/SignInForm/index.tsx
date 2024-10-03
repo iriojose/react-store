@@ -3,7 +3,7 @@ import { Form } from "../../atoms/Form";
 import { Container } from "../../atoms/Container";
 import { Input } from "../../atoms/Input";
 import { Button } from "../../atoms/Button";
-import { useForm2, FormState } from "../../../hooks/useForm2";
+import { useForm, FormState } from "../../../hooks/useForm";
 import { useNavigate } from "react-router-dom";
 import { useContextProvider } from "../../../store";
 import { User } from "../../../models/user";
@@ -16,7 +16,7 @@ const SignInForm: FC = () => {
     const { actions } = useContextProvider()
     const navigate = useNavigate()
     
-    const { register, handleSubmit, reset, formErrors, isFormValid, isSubmitting } = useForm2()
+    const { register, handleSubmit, reset, formErrors, isFormValid, isSubmitting } = useForm()
     const [showPassword, setShowPassword] = useState(false)
 
     const onSubmit = async(data: FormState) => {
