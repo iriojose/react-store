@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, useEffect, useCallback, ChangeEvent } from "react";
 
 type FormState = Record<string, string>
 type FormErrors = Record<string, string>
@@ -23,24 +23,24 @@ const useForm2 = () => {
     const [formFields, setFormFields] = useState<FormState>({}) 
     const [formErrors, setFormErrors] = useState<FormErrors>({});
     const [validations, setValidations] = useState<Validations>({})
-
+    const [isFormValid, setIsFormValid] = useState(false)
     
     const register = (name: string, rules?: Rules) => {
         if(!(name in formFields)) {
-            setFormFields((prevValues) => ({//add field
-              ...prevValues,
-              [name]: '',
+            setFormFields((prevValues) => ({
+                ...prevValues,
+                [name]: '',
             }));
             
             if(rules) {
-                setValidations(prev => ({//add validations of rules
+                setValidations(prev => ({
                     ...prev,
                     [name]: rules
                 }))
             }
         }
 
-        return {//return params for inputs
+        return {
             name: name,
             value: formFields[name] || "",
             onChange: handleChange,
@@ -55,7 +55,7 @@ const useForm2 = () => {
             [name]: value, 
         }));
 
-        let error: string | null = null;//validate of rules
+        let error: string | null = null;
         for (const key of Object.keys(validations[name]) as ACTION_RULES[]) {
             if(validationStrategies[key] && !validationStrategies[key](value, validations[name])){
                 if(typeof validations[name][key] === "string") error = validations[name][key]
@@ -70,10 +70,21 @@ const useForm2 = () => {
         }));
     }
 
+    const checkFormValidity = useCallback(() => {
+        const hasNoErrors = Object.values(formErrors).every(error => !error);
+        const allFieldsFilled = Object.values(formFields).every(value => value.trim() !== '');
+        return hasNoErrors && allFieldsFilled;
+    },[formErrors, formFields]);
+
+    useEffect(() => {
+        setIsFormValid(checkFormValidity());
+    }, [formFields, formErrors, checkFormValidity]);
+
     return {
         register,
         formFields,
-        formErrors
+        formErrors,
+        isFormValid
     } 
 }
 
