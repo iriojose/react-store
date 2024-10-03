@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, ChangeEvent } from "react";
 
 type Props = {
     className?: string
@@ -6,7 +6,7 @@ type Props = {
     placeholder?: string
     name: string
     type?: string
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void
     label?: () => ReactNode
     leftIcon?: () => ReactNode
     rightIcon?: () => ReactNode
